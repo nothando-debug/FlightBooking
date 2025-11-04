@@ -1,102 +1,121 @@
-# Flight Booking – Python OOP Project 2
+# ✈️ Flight Booking System
 
-We'll be implementing a mini flight booking system with python oop. Same with uber I've written tests already that you will have to pass.
-
----
-
-## Phased Learning & Test Guide
-
-| Phase                             | Test File                       | Concepts Covered                                                                   | Learning Goal                                              |
-| --------------------------------- | ------------------------------- | ---------------------------------------------------------------------------------- | ---------------------------------------------------------- |
-| **1 – Core OOP**                  | `test_flight_basics.py`         | Classes, attributes, `@property`, dunder methods (`__eq__`, `__repr__`, `__str__`) | Learn class creation, encapsulation, basic object behavior |
-|                                   | `test_passenger_basics.py`      | Classes, attributes, property setter/getter, dunder methods                        | Learn balance validation, object comparison                |
-| **2 – Booking & System**          | `test_booking_basic.py`         | Composition, method interactions, exception handling                               | Implement booking/cancellation logic, handle errors        |
-|                                   | `test_booking_system.py`        | Collections, manifests, revenue calculation                                        | Manage multiple flights and passengers                     |
-| **3 – Decorators**                | `test_functional_decorators.py` | Functional decorators, stacking                                                    | Enforce business rules via decorators                      |
-|                                   | `test_oop_decorators.py`        | `@staticmethod`, `@classmethod`, `@property`                                       | Apply decorators to class methods and attributes           |
-| **4 – Dunder Methods & Advanced** | `test_dunder_methods.py`        | Sorting (`__lt__`), membership (`__contains__`), length (`__len__`)                | Advanced object behavior, collections interface            |
-| **Optional**                      | `test_persistence.py`           | JSON persistence, save/load                                                        | Practice file I/O and object serialization                 |
+Welcome to the **Flight Booking System** — a fully object-oriented Python project designed to teach **real-world OOP design**, **dunder methods**, **decorators**, and **test-driven development (TDD)** through a fun, practical problem: booking flights.
 
 ---
 
-## Core Classes
+## 🧱 Overview
 
-### Flight
+This project simulates the core logic of an airline booking app.  
+Users can:
+- Create flights  
+- Register passengers  
+- Make and cancel bookings  
+- Handle edge cases like overbooked flights and duplicate reservations  
 
-Represents a flight with:
-
-- `flight_number`
-- `capacity`
-- `price`
-- `passengers` list
-
-**Key Methods/Properties**:
-
-- `available_seats` property
-- `__eq__`, `__repr__`, `__str__`
-- `__lt__`, `__contains__`, `__len__`
+The catch: 🧩 **You start with failing tests.**  
+Your job is to implement the code to make them pass — learning **clean OOP**, **Python magic methods**, and **TDD** in the process.
 
 ---
 
-### Passenger
+## 🎯 Learning Objectives
 
-Represents a passenger with:
+By completing this project, you’ll understand and apply **nearly every major Python concept**:
 
+| Concept | Where You’ll See It |
+|----------|--------------------|
+| **Classes & Objects** | Every major entity (Flight, Passenger, Booking, BookingSystem) |
+| **Encapsulation** | Private attributes and getters/setters for internal state |
+| **Inheritance & Composition** | BookingSystem manages Flights and Passengers as composed objects |
+| **Dunder Methods (`__eq__`, `__str__`, `__repr__`)** | For comparing, printing, and debugging classes |
+| **Class & Static Methods** | Used for object creation or validation logic |
+| **OOP Decorators (`@property`, `@classmethod`, `@staticmethod`)** | To manage computed attributes and alternate constructors |
+| **Custom Exceptions** | To handle invalid bookings or overcapacity gracefully |
+| **Unit Testing (`unittest`)** | To verify behavior and prevent regressions |
+| **TDD (Test-Driven Development)** | Write code only to make tests pass |
+| **Type Hints** | For cleaner, modern Python |
+| **Equality and Hashing (`__eq__`, `__hash__`)** | To make passengers or flights comparable and usable in sets/dicts |
+| **Docstrings and Clean Code** | To document each class and function professionally |
+
+By the end, you’ll basically know how to architect a mini system like **Uber, Expedia, or Airbnb** in pure Python.
+
+---
+
+## 🧩 Core Components
+
+### 🛫 `Flight`
+Represents a flight that passengers can book.
+
+**Attributes**
+- `flight_number` — unique string (e.g., `"EK202"`)
+- `origin`, `destination` — where the flight goes
+- `capacity` — total seats available
+- `_booked_passengers` — internal list of passengers (encapsulated)
+
+**Key Methods**
+- `add_booking(passenger)` — adds a passenger if not full  
+- `is_full()` — returns `True` when no seats left  
+- `available_seats()` — calculates seats dynamically  
+- `__eq__()` — compares two flights by flight number  
+- `__str__()` — readable output like `"Flight EK202: Dubai → New York (Seats left: 2)"`
+
+---
+
+### 🧍 `Passenger`
+Represents a person who can book flights.
+
+**Attributes**
 - `name`
-- `passport_id`
-- `balance`
+- `passport_number`
+- `_bookings` — list of `Booking` objects linked to this passenger
 
-**Key Methods/Properties**:
-
-- Balance setter validates non-negative balance
-- `__eq__`, `__repr__`, `__str__`
-
----
-
-### BookingSystem
-
-Manages flights and bookings:
-
-- Add/find flights
-- Book/cancel passengers
-- Get passenger manifests
-- Calculate total revenue
-
-**Key Features**:
-
-- Uses composition (flights + passengers)
-- Implements class/staticmethods for system-wide actions
+**Key Methods**
+- `add_booking(flight)` — adds a flight to passenger’s list  
+- `cancel_booking(flight)` — removes a flight if exists  
+- `__eq__()` — passengers compared by passport number  
+- `__repr__()` — for debugging  
+- `@property` — computed properties like total flights booked  
 
 ---
 
-### Decorators
+### 📦 `Booking`
+Represents a connection between a `Passenger` and a `Flight`.
 
-Functional decorators enforce rules:
+**Attributes**
+- `passenger`
+- `flight`
+- `status` — e.g. `"Confirmed"` or `"Cancelled"`
 
-- `@requires_balance` → ensures passenger has enough balance to book
-- `@apply_discount` → applies VIP or off-peak discounts
-- `@log_transaction` → logs bookings/cancellations
-
-OOP decorators are also used:
-
-- `@classmethod` → get flight by flight number
-- `@staticmethod` → calculate discounted price
-- `@property` → manage available seats and balance
+**Key Methods**
+- `confirm()` — links both sides (adds passenger to flight, flight to passenger)
+- `cancel()` — rolls back the link  
+- `__str__()` — `"Alice booked EK202 (Confirmed)"`
 
 ---
 
-## Learning Goals
+### 🧠 `BookingSystem`
+Central brain coordinating everything.
 
-By the end of this project you should be able to:
+**Attributes**
+- `flights` — dictionary `{flight_number: Flight}`
+- `passengers` — dictionary `{passport_number: Passenger}`
+- `bookings` — list of all active bookings
 
-1. Learn encapsulation, properties, and dunder methods
-2. Implement composition and system-level interactions
-3. Understand decorators, both functional and OOP
-4. Apply exception handling and business rules
-5. Optionally practice persistence with JSON
-6. Learn to write test-driven code
+**Key Methods**
+- `add_flight(...)`
+- `register_passenger(...)`
+- `make_booking(flight_number, passport_number)`
+- `cancel_booking(flight_number, passport_number)`
+- `find_passenger(passport_number)` and `find_flight(flight_number)`
+- `__len__()` — total bookings in system  
+- `__iter__()` — iterate through all bookings easily  
 
-To check ur code
-`python -m unittest tests/blah.py`
+---
 
-x0 O/
+## 🧪 Tests
+
+This project is **TDD-based**. You’ll begin with failing tests in `/tests/`.
+
+To run:
+```bash
+python3 -m unittest discover -s tests
