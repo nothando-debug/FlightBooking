@@ -8,8 +8,8 @@ class Passenger:
     def add_booking(self, flight):
         self.bookings.append(flight)
 
-    def cancel_booking(self, passenger):
-        self.bookings.remove(passenger)
+    def cancel_booking(self, flight):
+        self.bookings.remove(flight)
 
     def __eq__(self, other):
 
@@ -21,7 +21,7 @@ class Passenger:
     def total_bookings(self):
         return len(self.bookings)
     
-
+             
     def __repr__(self):
         return f"{self.name}, {self.passport_number}"
 

@@ -36,8 +36,8 @@ class Flight:
        
         return f"Flight number: {self.flight_number}, From: {self.origin}, To: {self.destination}, Seats: {self.available_seats}"
     
-f = Flight("ER202", "South Africa", "Nairobi", capacity = 4)
-print(f)
+# f = Flight("ER202", "South Africa", "Nairobi", capacity = 4)
+# print(f)
 
 
 
